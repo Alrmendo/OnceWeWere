@@ -9,19 +9,19 @@ const SECTIONS = [
     href: "/once",
     label: "Once",
     dataCategory: "once" as const,
-    description: "Những thứ đã từng tồn tại.",
+    // description: "Những thứ đã từng tồn tại.",
   },
   {
     href: "/we",
     label: "We",
     dataCategory: "we" as const,
-    description: "Những thứ xảy ra giữa con người với nhau.",
+    // description: "Những thứ xảy ra giữa con người với nhau.",
   },
   {
     href: "/were",
     label: "Were",
     dataCategory: "were" as const,
-    description: "Chiêm nghiệm.",
+    // description: "Chiêm nghiệm.",
   },
 ];
 
@@ -40,7 +40,7 @@ export default function HomePage() {
             <li key={s.href} className="entry-list__item" data-category={s.dataCategory}>
               <Link href={s.href} className="entry-list__link">
                 <span className="entry-list__date font-display">{s.label}</span>
-                <span className="entry-list__preview">{s.description}</span>
+                {/* <span className="entry-list__preview">{s.description}</span> */}
               </Link>
             </li>
           ))}
