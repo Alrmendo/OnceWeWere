@@ -10,7 +10,7 @@ export default function AdminProtectedLayout({
     <>
       <div className="admin-topbar">
         <Link href="/admin" className="admin-topbar__brand">
-          onceweweré · admin
+          oncewewere · admin
         </Link>
         <nav className="admin-topbar__nav">
           <Link href="/admin">Bài viết</Link>

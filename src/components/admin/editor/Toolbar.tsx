@@ -59,10 +59,51 @@ export function EditorToolbar({ editor }: { editor: Editor | null }) {
   // Same reasoning as toggleList: isolate the heading to a fresh block
   // instead of turning everything typed so far into a heading.
   function toggleHeading() {
-    if (!editor!.isActive("heading", { level: 2 })) {
-      editor!.chain().focus().splitBlock().run();
+    const ed = editor!;
+
+    if (ed.state.selection.empty) {
+      if (!ed.isActive("heading", { level: 2 })) {
+        ed.chain().focus().splitBlock().run();
+      }
+      ed.chain().focus().toggleHeading({ level: 2 }).run();
+      return;
     }
-    editor!.chain().focus().toggleHeading({ level: 2 }).run();
+
+    // A real range is highlighted. splitBlock() *deletes* a non-empty
+    // selection (it's built to emulate pressing Enter over a selection),
+    // so toggling straight to a heading would silently eat the selected
+    // text. Instead: split right after the selection, then right before
+    // it — collapsing the selection to each boundary in turn so nothing
+    // gets deleted — which isolates exactly the highlighted range into
+    // its own paragraph. splitBlock() leaves the selection inside that
+    // new paragraph, so the chained toggleHeading() lands on it precisely.
+    const { from, to } = ed.state.selection;
+
+    // A hardBreak right at either edge of the selection is the <br> that
+    // used to separate it from its neighbor. Left in place it stays behind
+    // as a stray blank line once the selection becomes its own block, so
+    // drop it before splitting.
+    const afterTo = ed.state.doc.resolve(to).nodeAfter;
+    if (afterTo?.type.name === "hardBreak") {
+      ed.chain().deleteRange({ from: to, to: to + 1 }).run();
+    }
+
+    const beforeFrom = ed.state.doc.resolve(from).nodeBefore;
+    const hadLeadingBreak = beforeFrom?.type.name === "hardBreak";
+    if (hadLeadingBreak) {
+      ed.chain().deleteRange({ from: from - 1, to: from }).run();
+    }
+
+    const newFrom = hadLeadingBreak ? from - 1 : from;
+    const newTo = newFrom + (to - from);
+
+    ed.chain().focus().setTextSelection(newTo).splitBlock().run();
+    ed.chain()
+      .focus()
+      .setTextSelection(newFrom)
+      .splitBlock()
+      .toggleHeading({ level: 2 })
+      .run();
   }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {

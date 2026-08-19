@@ -22,8 +22,8 @@ const newsreader = Newsreader({
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "onceweweré",
-    template: "%s · onceweweré",
+    default: "oncewewere",
+    template: "%s · oncewewere",
   },
   description: SITE_DESCRIPTION,
 };

@@ -90,6 +90,24 @@ export function ImageIcon() {
   );
 }
 
+export function CloseIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <path d="M3 3l8 8" />
+      <path d="M11 3l-8 8" />
+    </svg>
+  );
+}
+
 export function SpinnerIcon() {
   return (
     <svg

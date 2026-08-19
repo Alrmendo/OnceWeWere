@@ -9,7 +9,7 @@ const SECTIONS = [
     href: "/once",
     label: "Once",
     dataCategory: "once" as const,
-    description: "Những thứ đã từng tồn tại — hoài niệm, quá khứ.",
+    description: "Những thứ đã từng tồn tại.",
   },
   {
     href: "/we",
@@ -21,7 +21,7 @@ const SECTIONS = [
     href: "/were",
     label: "Were",
     dataCategory: "were" as const,
-    description: "Phần sâu nhất. Chiêm nghiệm.",
+    description: "Chiêm nghiệm.",
   },
 ];
 
@@ -29,9 +29,9 @@ export default function HomePage() {
   return (
     <div className="mx-auto max-w-[640px] px-lg py-3xl">
       <section>
-        <p className="prose-body">
+        {/* <p className="prose-body">
           {`Đây là nơi mình chép lại những suy nghĩ không có chỗ nào khác để đi.\n\nKhông có tiêu đề, không sắp xếp cho đẹp — chỉ có ngày tháng, và những gì mình nghĩ vào ngày hôm đó.\n\nBa mục dưới đây là ba cách mình chia nhỏ những suy nghĩ ấy.`}
-        </p>
+        </p> */}
       </section>
 
       <section className="mt-2xl" aria-label="Chuyên mục">

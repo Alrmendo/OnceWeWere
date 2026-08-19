@@ -791,6 +791,42 @@ body {
   margin: 0.75em 0;
 }
 
+.editor-image {
+  position: relative;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.editor-image__delete {
+  position: absolute;
+  top: calc(0.75em + 6px);
+  right: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: none;
+  border-radius: 999px;
+  background: oklch(20% 0 0 / 0.6);
+  color: white;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.editor-image:hover .editor-image__delete,
+.editor-image--selected .editor-image__delete,
+.editor-image__delete:focus-visible {
+  opacity: 1;
+}
+
+.editor-image__delete:hover {
+  background: oklch(20% 0 0 / 0.85);
+}
+
 .editor__content h2 {
   font-family: var(--font-admin);
   font-weight: 600;

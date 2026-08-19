@@ -1,7 +1,15 @@
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
+import { ReactNodeViewRenderer } from "@tiptap/react";
 import { Placeholder } from "@tiptap/extensions";
 import { HardBreakOnEnter } from "./hardBreakOnEnter";
+import { ImageNodeView } from "./ImageNodeView";
+
+const DeletableImage = Image.extend({
+  addNodeView() {
+    return ReactNodeViewRenderer(ImageNodeView);
+  },
+});
 
 export function buildEditorExtensions() {
   return [
@@ -16,7 +24,7 @@ export function buildEditorExtensions() {
       underline: false,
       link: false,
     }),
-    Image.configure({
+    DeletableImage.configure({
       inline: false,
       allowBase64: false,
       HTMLAttributes: { alt: "" },

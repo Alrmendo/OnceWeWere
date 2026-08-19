@@ -13,16 +13,16 @@ export function buildHomeMetadata(): Metadata {
     description: SITE_DESCRIPTION,
     alternates: { canonical: "/" },
     openGraph: {
-      title: "onceweweré",
+      title: "oncewewere",
       description: SITE_DESCRIPTION,
       url,
-      siteName: "onceweweré",
+      siteName: "oncewewere",
       type: "website",
       locale: "vi_VN",
     },
     twitter: {
       card: "summary",
-      title: "onceweweré",
+      title: "oncewewere",
       description: SITE_DESCRIPTION,
     },
   };
@@ -38,16 +38,16 @@ export function buildCategoryMetadata(category: PostCategory): Metadata {
     description: meta.description,
     alternates: { canonical: path },
     openGraph: {
-      title: `onceweweré · ${meta.label}`,
+      title: `oncewewere · ${meta.label}`,
       description: meta.description,
       url,
-      siteName: "onceweweré",
+      siteName: "oncewewere",
       type: "website",
       locale: "vi_VN",
     },
     twitter: {
       card: "summary",
-      title: `onceweweré · ${meta.label}`,
+      title: `oncewewere · ${meta.label}`,
       description: meta.description,
     },
   };
@@ -65,16 +65,16 @@ export function buildPostMetadata(category: PostCategory, post: Post): Metadata 
     description,
     alternates: { canonical: path },
     openGraph: {
-      title: `onceweweré · ${title}`,
+      title: `oncewewere · ${title}`,
       description,
       url,
-      siteName: "onceweweré",
+      siteName: "oncewewere",
       type: "article",
       locale: "vi_VN",
     },
     twitter: {
       card: "summary",
-      title: `onceweweré · ${title}`,
+      title: `oncewewere · ${title}`,
       description,
     },
   };

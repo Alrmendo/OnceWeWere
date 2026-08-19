@@ -37,7 +37,7 @@ export function PostView({
 
       <div className="post-actions">
         <ReactionButton postId={post.id} initialCount={post.reaction_count} />
-        <ShareButton title={`onceweweré · ${meta.label} · ${formatPostDate(post.date)}`} />
+        <ShareButton title={`oncewewere · ${meta.label} · ${formatPostDate(post.date)}`} />
       </div>
 
       <section className="comments" aria-labelledby="comments-heading">

@@ -28,7 +28,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         <div className="letter-close__inner">
           <p className="letter-close__line">Cảm ơn vì đã ghé qua.</p>
           <p className="letter-close__meta">
-            Nghi · <Link href="/">onceweweré</Link>
+            Nghi · <Link href="/">oncewewere</Link>
           </p>
         </div>
       </footer>
