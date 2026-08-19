@@ -142,3 +142,20 @@ khác nhau (chỉ 1 loại tim/like)
 - Domain riêng (hiện tại dùng subdomain Vercel free đến khi Nghi quyết)
 - Nếu spam comment trở thành vấn đề thật sau khi ra mắt, cân nhắc nâng cấp
   chống spam (rate-limit theo IP, captcha) — chưa cần lo trước
+
+## 10. Backlog — chỉ làm sau khi Giai đoạn 1 và 2 đã ổn định
+
+**Rich text editor cho admin** — nâng `<textarea>` thuần lên editor có toolbar
+(bold, italic, bullet list, numbered list — kiểu Notion/Tiptap). Đây là việc
+làm SAU CÙNG, sau khi toàn bộ luồng viết/đọc/tương tác cơ bản đã chạy ổn.
+
+RÀNG BUỘC BẮT BUỘC khi làm việc này (đọc lại mục 2): line break do Nghi tự
+ngắt vẫn phải được bảo toàn tuyệt đối như hiện tại. Các thư viện rich-text dựa
+trên ProseMirror (Tiptap, v.v.) mặc định biến mỗi lần Enter thành 1 đoạn `<p>`
+mới (gộp/định dạng lại khoảng cách), KHÔNG giữ line break đơn — phải cấu hình
+rõ ràng để mỗi Enter tạo hard break (`<br>`), không được để nó tự ý gộp đoạn.
+Nếu không cấu hình đúng chỗ này, toàn bộ nhịp điệu văn bản (lý do quan trọng
+nhất của cả trang) sẽ bị phá vỡ khi chuyển từ textarea sang rich text.
+
+Gợi ý thư viện: Tiptap (ProseMirror-based, phổ biến, dễ tuỳ biến với Next.js,
+hỗ trợ cấu hình hard break).
