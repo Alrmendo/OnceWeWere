@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Newsreader } from "next/font/google";
 import "./globals.css";
 import { getSiteUrl } from "@/lib/site";
+import { SITE_DESCRIPTION } from "@/lib/metadata";
 
 const fraunces = Fraunces({
   variable: "--font-display",
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
     default: "onceweweré",
     template: "%s · onceweweré",
   },
-  description: "Nhật ký cá nhân — once, we, were.",
+  description: SITE_DESCRIPTION,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

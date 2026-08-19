@@ -2,6 +2,7 @@ import { CATEGORY_META } from "@/lib/categories";
 import type { Post, PostCategory } from "@/lib/posts";
 import type { Comment } from "@/lib/comments";
 import { formatPostDate } from "@/lib/format";
+import { sanitizePostBody } from "@/lib/sanitize";
 import { ReactionButton } from "./ReactionButton";
 import { ShareButton } from "./ShareButton";
 import { CommentForm } from "./CommentForm";
@@ -29,7 +30,10 @@ export function PostView({
         <h1 className="post-title">{formatPostDate(post.date)}</h1>
       </header>
 
-      <div className="prose-body">{post.body}</div>
+      <div
+        className="prose-body"
+        dangerouslySetInnerHTML={{ __html: sanitizePostBody(post.body) }}
+      />
 
       <div className="post-actions">
         <ReactionButton postId={post.id} initialCount={post.reaction_count} />

@@ -1,4 +1,8 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { buildHomeMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = buildHomeMetadata();
 
 const SECTIONS = [
   {

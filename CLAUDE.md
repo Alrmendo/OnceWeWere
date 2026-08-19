@@ -46,7 +46,8 @@ posts
 - slug: text (unique)      -- định danh URL ổn định để share, vd "were-20260814-a1b2"
 - date: date               -- hiển thị như tiêu đề, vd "14/8/26"
 - category: enum('once','we','were')
-- body: text                -- raw text, giữ nguyên line break
+- body: text                -- HTML đã sanitize (output từ Tiptap), KHÔNG còn
+                                là raw text — xem mục 10 để hiểu lý do đổi
 - published: boolean (default false)
 - reaction_count: integer (default 0)  -- 1 loại reaction duy nhất (tim/like) ở v1
 - created_at: timestamptz
@@ -65,6 +66,9 @@ bổ sung sau nếu Nghi muốn thêm tiêu đề phụ.
 
 `slug` cần được sinh tự động khi tạo bài (không để Nghi tự gõ) để tránh trùng
 lặp/lỗi URL khi share.
+
+**Storage:** bucket `post-images` (public read, chỉ authenticated/Nghi upload
+được) cho ảnh chèn trong bài — xem mục 10.
 
 ## 5. Auth
 
@@ -143,19 +147,47 @@ khác nhau (chỉ 1 loại tim/like)
 - Nếu spam comment trở thành vấn đề thật sau khi ra mắt, cân nhắc nâng cấp
   chống spam (rate-limit theo IP, captcha) — chưa cần lo trước
 
-## 10. Backlog — chỉ làm sau khi Giai đoạn 1 và 2 đã ổn định
+## 10. Editor nâng cấp — rich text + upload ảnh (đang triển khai)
 
-**Rich text editor cho admin** — nâng `<textarea>` thuần lên editor có toolbar
-(bold, italic, bullet list, numbered list — kiểu Notion/Tiptap). Đây là việc
-làm SAU CÙNG, sau khi toàn bộ luồng viết/đọc/tương tác cơ bản đã chạy ổn.
+**Rich text (đậm/nghiêng/bullet list/numbered list)** dùng Tiptap
+(ProseMirror-based).
 
-RÀNG BUỘC BẮT BUỘC khi làm việc này (đọc lại mục 2): line break do Nghi tự
-ngắt vẫn phải được bảo toàn tuyệt đối như hiện tại. Các thư viện rich-text dựa
-trên ProseMirror (Tiptap, v.v.) mặc định biến mỗi lần Enter thành 1 đoạn `<p>`
-mới (gộp/định dạng lại khoảng cách), KHÔNG giữ line break đơn — phải cấu hình
-rõ ràng để mỗi Enter tạo hard break (`<br>`), không được để nó tự ý gộp đoạn.
-Nếu không cấu hình đúng chỗ này, toàn bộ nhịp điệu văn bản (lý do quan trọng
-nhất của cả trang) sẽ bị phá vỡ khi chuyển từ textarea sang rich text.
+RÀNG BUỘC BẮT BUỘC (đọc lại mục 2): line break do Nghi tự ngắt phải được bảo
+toàn tuyệt đối. Tiptap mặc định biến mỗi Enter thành 1 đoạn `<p>` mới (thêm
+margin, phá nhịp điệu văn bản) — PHẢI cấu hình Enter tạo hard break (`<br>`)
+thay vì đoạn mới. Test lại bằng đúng bài mẫu gốc (mục 2) sau khi cấu hình.
 
-Gợi ý thư viện: Tiptap (ProseMirror-based, phổ biến, dễ tuỳ biến với Next.js,
-hỗ trợ cấu hình hard break).
+Thay đổi kéo theo:
+- `posts.body` chuyển từ raw text sang HTML đã sanitize (xem mục 4). Cần
+  migrate 3 bài cũ đã đăng (chuyển `\n` → `<br>`) để không mất nội dung/định
+  dạng khi đổi cách render.
+- Trang public đọc bài: đổi từ render text thuần (`white-space: pre-wrap`)
+  sang render HTML đã sanitize (dùng thư viện sanitize như DOMPurify, không
+  render thẳng HTML chưa qua lọc — kể cả khi chỉ Nghi là người viết).
+
+**Upload ảnh trong bài** — dùng Supabase Storage:
+- Tạo bucket `post-images` (public read, chỉ authenticated/Nghi upload được
+  — RLS tương tự các bảng khác).
+- Nút upload ảnh trong Tiptap toolbar → upload lên bucket → chèn URL public
+  vào bài dưới dạng `<img>`.
+- Giới hạn dung lượng file (vd 5MB) và định dạng cho phép (jpg/png/webp/gif).
+- v1 dùng thẻ `<img>` thường, chưa cần tối ưu qua next/image — nâng cấp sau
+  nếu ảnh làm chậm trang.
+
+## 11. Backlog còn lại — chưa làm đợt này
+
+- Autosave bản nháp khi đang viết (rủi ro mất nội dung nếu crash/đóng nhầm
+  tab — vẫn đáng cân nhắc làm sớm dù chưa chọn đợt này)
+- Preview trước khi publish
+- Đếm số từ + thời gian đọc ước tính
+- Focus mode khi viết
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

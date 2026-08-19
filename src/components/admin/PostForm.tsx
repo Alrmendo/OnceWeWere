@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import type { ActionState } from "@/app/admin/actions";
 import { CATEGORY_META } from "@/lib/categories";
 import { CATEGORIES, type PostCategory } from "@/lib/posts";
+import { PostEditor } from "@/components/admin/editor/PostEditor";
 
 export function PostForm({
   action,
@@ -62,19 +63,8 @@ export function PostForm({
       </div>
 
       <div>
-        <label htmlFor="body" className="admin-label">
-          Nội dung
-        </label>
-        <textarea
-          id="body"
-          name="body"
-          rows={24}
-          defaultValue={defaultValues?.body}
-          placeholder="Viết ở đây. Xuống dòng sẽ được giữ nguyên như khi đăng."
-          required
-          className="admin-textarea"
-          disabled={pending}
-        />
+        <label className="admin-label">Nội dung</label>
+        <PostEditor name="body" defaultValue={defaultValues?.body} disabled={pending} />
       </div>
 
       {state?.error ? <p className="admin-error">{state.error}</p> : null}

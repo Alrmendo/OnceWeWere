@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { generateSlug } from "@/lib/slug";
+import { sanitizePostBody, isPostBodyEmpty } from "@/lib/sanitize";
 import type { PostCategory } from "@/lib/posts";
 import { CATEGORIES } from "@/lib/posts";
 
@@ -54,10 +55,10 @@ export async function createPost(
 ): Promise<ActionState> {
   const category = readCategory(formData);
   const date = String(formData.get("date") ?? "");
-  const body = String(formData.get("body") ?? "");
+  const body = sanitizePostBody(String(formData.get("body") ?? ""));
 
   if (!date) return { error: "Chọn ngày cho bài viết." };
-  if (!body.trim()) return { error: "Nội dung không được để trống." };
+  if (isPostBodyEmpty(body)) return { error: "Nội dung không được để trống." };
 
   const supabase = await createClient();
   const slug = generateSlug(category, date);
@@ -81,10 +82,10 @@ export async function updatePost(
 ): Promise<ActionState> {
   const category = readCategory(formData);
   const date = String(formData.get("date") ?? "");
-  const body = String(formData.get("body") ?? "");
+  const body = sanitizePostBody(String(formData.get("body") ?? ""));
 
   if (!date) return { error: "Chọn ngày cho bài viết." };
-  if (!body.trim()) return { error: "Nội dung không được để trống." };
+  if (isPostBodyEmpty(body)) return { error: "Nội dung không được để trống." };
 
   const supabase = await createClient();
   const { error } = await supabase
@@ -108,6 +109,41 @@ export async function setPublished(id: string, published: boolean) {
 
   if (error) throw error;
   revalidatePath("/admin");
+}
+
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const EXT_BY_TYPE: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
+};
+
+export async function uploadPostImage(
+  formData: FormData
+): Promise<{ url: string } | { error: string }> {
+  const file = formData.get("file");
+  if (!(file instanceof File)) return { error: "Không có file nào được chọn." };
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    return { error: "Chỉ nhận ảnh jpg, png, webp hoặc gif." };
+  }
+  if (file.size > MAX_IMAGE_SIZE) {
+    return { error: "Ảnh vượt quá 5MB." };
+  }
+
+  const supabase = await createClient();
+  const ext = EXT_BY_TYPE[file.type];
+  const path = `${crypto.randomUUID()}.${ext}`;
+
+  const { error } = await supabase.storage
+    .from("post-images")
+    .upload(path, file, { contentType: file.type, upsert: false });
+
+  if (error) return { error: "Tải ảnh lên thất bại. " + error.message };
+
+  const { data } = supabase.storage.from("post-images").getPublicUrl(path);
+  return { url: data.publicUrl };
 }
 
 export async function deleteComment(id: string) {
