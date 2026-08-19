@@ -10,7 +10,7 @@ export function buildEditorExtensions() {
       blockquote: false,
       code: false,
       codeBlock: false,
-      heading: false,
+      heading: { levels: [2] },
       horizontalRule: false,
       strike: false,
       underline: false,

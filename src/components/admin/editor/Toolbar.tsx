@@ -7,6 +7,7 @@ import { uploadPostImage } from "@/app/admin/actions";
 import {
   BoldIcon,
   ItalicIcon,
+  HeadingIcon,
   BulletListIcon,
   OrderedListIcon,
   ImageIcon,
@@ -26,10 +27,17 @@ export function EditorToolbar({ editor }: { editor: Editor | null }) {
     selector: ({ editor }) => ({
       bold: editor?.isActive("bold") ?? false,
       italic: editor?.isActive("italic") ?? false,
+      heading: editor?.isActive("heading", { level: 2 }) ?? false,
       bulletList: editor?.isActive("bulletList") ?? false,
       orderedList: editor?.isActive("orderedList") ?? false,
     }),
-  }) ?? { bold: false, italic: false, bulletList: false, orderedList: false };
+  }) ?? {
+    bold: false,
+    italic: false,
+    heading: false,
+    bulletList: false,
+    orderedList: false,
+  };
 
   if (!editor) return null;
 
@@ -46,6 +54,15 @@ export function EditorToolbar({ editor }: { editor: Editor | null }) {
     } else {
       editor!.chain().focus().toggleOrderedList().run();
     }
+  }
+
+  // Same reasoning as toggleList: isolate the heading to a fresh block
+  // instead of turning everything typed so far into a heading.
+  function toggleHeading() {
+    if (!editor!.isActive("heading", { level: 2 })) {
+      editor!.chain().focus().splitBlock().run();
+    }
+    editor!.chain().focus().toggleHeading({ level: 2 }).run();
   }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -98,6 +115,18 @@ export function EditorToolbar({ editor }: { editor: Editor | null }) {
           aria-pressed={active.italic}
         >
           <ItalicIcon />
+        </button>
+
+        <span className="editor__divider" aria-hidden="true" />
+
+        <button
+          type="button"
+          className={active.heading ? "editor__btn editor__btn--active" : "editor__btn"}
+          onClick={toggleHeading}
+          aria-label="Tiêu đề"
+          aria-pressed={active.heading}
+        >
+          <HeadingIcon />
         </button>
 
         <span className="editor__divider" aria-hidden="true" />

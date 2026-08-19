@@ -28,6 +28,15 @@ export const HardBreakOnEnter = Extension.create({
           return this.editor.commands.splitListItem("listItem");
         }
 
+        // Headings are meant to be a single short line. At the end of a
+        // heading, Tiptap's own splitBlock() already exits to a fresh
+        // paragraph (ProseMirror falls back to the schema's default block
+        // type there) rather than continuing the heading or inserting a
+        // <br> inside it — exactly what mục 10 requires.
+        if ($from.parent.type.name === "heading") {
+          return this.editor.commands.splitBlock();
+        }
+
         return this.editor.commands.setHardBreak();
       },
     };

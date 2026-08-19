@@ -1,6 +1,6 @@
 import DOMPurify from "isomorphic-dompurify";
 
-const ALLOWED_TAGS = ["p", "br", "strong", "em", "ul", "ol", "li", "img"];
+const ALLOWED_TAGS = ["p", "br", "strong", "em", "h2", "ul", "ol", "li", "img"];
 const ALLOWED_ATTR = ["src", "alt"];
 
 export function sanitizePostBody(html: string): string {

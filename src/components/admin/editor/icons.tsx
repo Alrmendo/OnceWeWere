@@ -67,6 +67,19 @@ export function OrderedListIcon() {
   );
 }
 
+export function HeadingIcon() {
+  return (
+    <IconBase>
+      <path d="M3 3v10" />
+      <path d="M11 3v10" />
+      <path d="M3 8h8" />
+      <text x="10.5" y="13.5" fontSize="5.5" fill="currentColor" stroke="none">
+        2
+      </text>
+    </IconBase>
+  );
+}
+
 export function ImageIcon() {
   return (
     <IconBase>

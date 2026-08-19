@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { CATEGORY_META } from "@/lib/categories";
 import type { Post, PostCategory } from "@/lib/posts";
-import { formatPostDate, firstLine } from "@/lib/format";
+import { formatPostDate } from "@/lib/format";
+import { buildPostPreview } from "@/lib/preview";
 
 export function CategoryIndex({
   category,
@@ -32,21 +33,50 @@ export function CategoryIndex({
         </p>
       ) : (
         <ul className="entry-list">
-          {posts.map((post) => (
-            <li key={post.id} className="entry-list__item">
-              <Link
-                href={`/${category}/${post.slug}`}
-                className="entry-list__link"
-              >
-                <span className="entry-list__date">
-                  {formatPostDate(post.date)}
-                </span>
-                <span className="entry-list__preview">
-                  {firstLine(post.body)}
-                </span>
-              </Link>
-            </li>
-          ))}
+          {posts.map((post) => {
+            const preview = buildPostPreview(post.body);
+            const hasText = Boolean(preview.heading || preview.snippet);
+
+            return (
+              <li key={post.id} className="entry-list__item">
+                <Link
+                  href={`/${category}/${post.slug}`}
+                  className="entry-list__link"
+                >
+                  <span className="entry-list__date">
+                    {formatPostDate(post.date)}
+                  </span>
+                  {preview.imageSrc && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={preview.imageSrc}
+                      alt=""
+                      className="entry-list__thumb"
+                    />
+                  )}
+                  {(hasText || preview.isEmpty) && (
+                    <span className="entry-list__preview">
+                      {preview.isEmpty ? (
+                        <span className="entry-list__preview--empty">
+                          Chưa có nội dung
+                        </span>
+                      ) : (
+                        <>
+                          {preview.heading && (
+                            <strong className="entry-list__preview-heading">
+                              {preview.heading}
+                            </strong>
+                          )}
+                          {preview.heading && preview.snippet ? " — " : null}
+                          {preview.snippet}
+                        </>
+                      )}
+                    </span>
+                  )}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

@@ -149,13 +149,17 @@ khác nhau (chỉ 1 loại tim/like)
 
 ## 10. Editor nâng cấp — rich text + upload ảnh (đang triển khai)
 
-**Rich text (đậm/nghiêng/bullet list/numbered list)** dùng Tiptap
-(ProseMirror-based).
+**Rich text (đậm/nghiêng/bullet list/numbered list/heading)** dùng Tiptap
+(ProseMirror-based). Heading chỉ cần 1 cấp (H2) — không cần nhiều cấp, đủ để
+Nghi đánh dấu 1 dòng làm tiêu đề nổi bật trong bài.
 
-RÀNG BUỘC BẮT BUỘC (đọc lại mục 2): line break do Nghi tự ngắt phải được bảo
-toàn tuyệt đối. Tiptap mặc định biến mỗi Enter thành 1 đoạn `<p>` mới (thêm
-margin, phá nhịp điệu văn bản) — PHẢI cấu hình Enter tạo hard break (`<br>`)
-thay vì đoạn mới. Test lại bằng đúng bài mẫu gốc (mục 2) sau khi cấu hình.
+RÀNG BUỘC BẮT BUỘC (đọc lại mục 2): line break do Nghi tự ngắt trong đoạn văn
+thường phải được bảo toàn tuyệt đối — Enter trong `<p>` vẫn phải tạo hard
+break (`<br>`) như đã làm. NHƯNG: Enter ở cuối 1 heading phải **thoát ra
+đoạn văn `<p>` mới**, không được tạo `<br>` bên trong heading (heading chỉ
+nên là 1 dòng ngắn). Đây là chỗ dễ lặp lại kiểu bug đã gặp với list (mục 10
+bản trước) — test kỹ: gõ heading, Enter, gõ tiếp đoạn văn thường, xác nhận
+tách đúng 2 block riêng biệt.
 
 Thay đổi kéo theo:
 - `posts.body` chuyển từ raw text sang HTML đã sanitize (xem mục 4). Cần
@@ -163,7 +167,8 @@ Thay đổi kéo theo:
   dạng khi đổi cách render.
 - Trang public đọc bài: đổi từ render text thuần (`white-space: pre-wrap`)
   sang render HTML đã sanitize (dùng thư viện sanitize như DOMPurify, không
-  render thẳng HTML chưa qua lọc — kể cả khi chỉ Nghi là người viết).
+  render thẳng HTML chưa qua lọc — kể cả khi chỉ Nghi là người viết). Allowlist
+  DOMPurify cần thêm `h2` (trước đó: p, br, strong, em, ul, ol, li, img).
 
 **Upload ảnh trong bài** — dùng Supabase Storage:
 - Tạo bucket `post-images` (public read, chỉ authenticated/Nghi upload được
@@ -174,7 +179,31 @@ Thay đổi kéo theo:
 - v1 dùng thẻ `<img>` thường, chưa cần tối ưu qua next/image — nâng cấp sau
   nếu ảnh làm chậm trang.
 
-## 11. Backlog còn lại — chưa làm đợt này
+## 11. Preview trên trang danh sách bài (đang triển khai)
+
+Hiện đang lỗi: trang danh sách cắt thẳng chuỗi HTML của `body` làm preview,
+nên hiện ra cả thẻ HTML thô (vd `<img src="...`) thay vì nội dung đọc được.
+Cần thay bằng hàm tạo preview theo đúng thứ tự ưu tiên sau (áp dụng case đầu
+tiên khớp, có thể kết hợp nhiều case cùng lúc theo thứ tự liệt kê):
+
+1. Nếu bài có ảnh → hiện thumbnail ảnh đầu tiên tìm thấy trong bài.
+2. Nếu bài bắt đầu bằng heading → hiện text của heading đó nổi bật (đậm) làm
+   dòng dẫn, trước phần snippet text.
+3. Đoạn text snippet: lấy toàn bộ chữ thuần (bỏ hết thẻ HTML, giải mã ký tự
+   như `&amp;` → `&`), nối các dòng thành 1 đoạn liền mạch (KHÔNG giữ line
+   break gốc — nhịp điệu xuống dòng chỉ có ý nghĩa ở trang đọc đầy đủ), cắt ở
+   khoảng 120-150 ký tự, cắt đúng ranh giới từ (không cắt giữa 1 từ), thêm
+   "…" nếu bị cắt.
+4. Nếu bài ngắn hơn độ dài cắt → hiện nguyên văn, không thêm "…" thừa.
+5. Nếu bài chỉ có ảnh, gần như không có chữ → chỉ hiện ảnh, không hiện dòng
+   trống/"…" vô nghĩa.
+6. Nếu bài hoàn toàn trống (draft chưa viết gì) → hiện placeholder nhẹ "Chưa
+   có nội dung".
+7. Nếu bài bắt đầu bằng bullet/numbered list (chưa có đoạn văn/heading nào
+   trước) → hiện nội dung list nối thành text liền mạch, bỏ dấu gạch đầu
+   dòng, không cố giữ định dạng list trong card nhỏ.
+
+## 12. Backlog còn lại — chưa làm đợt này
 
 - Autosave bản nháp khi đang viết (rủi ro mất nội dung nếu crash/đóng nhầm
   tab — vẫn đáng cân nhắc làm sớm dù chưa chọn đợt này)
