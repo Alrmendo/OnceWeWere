@@ -6,14 +6,14 @@ export const CATEGORY_META: Record<
 > = {
   once: {
     label: "Once",
-    description: "Những thứ đã từng tồn tại — hoài niệm, quá khứ.",
+    description: "",
   },
   we: {
     label: "We",
-    description: "Những thứ xảy ra giữa con người với nhau.",
+    description: "",
   },
   were: {
     label: "Were",
-    description: "Phần sâu nhất. Chiêm nghiệm.",
+    description: "",
   },
 };
